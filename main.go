@@ -15,15 +15,32 @@ func main() {
 
 	sourceCode := []byte(dat)
 	// Query with predicates
-	screamingSnakeCasePattern := `(
-		(identifier) @constant
-		(#match? @constant "^[A-Z][A-Z_]+")
-	)`
+	rootCratePattern := `
+		(
+			scoped_identifier
+			path:
+			(
+				identifier
+			) @crate_name
+			name:
+			(
+				identifier
+			)
+		)
+	`
+	endCratePattern := `
+		(
+			scoped_identifier
+			name:
+			(
+				identifier
+			) @crate_name
+		)
+	`
 
 	// Parse source code into a tree
 	lang := rust.GetLanguage()
 	n, _ := sitter.ParseCtx(context.Background(), sourceCode, lang)
-	fmt.Printf("tree: %v\n", n)
 
 	// Execute the query
 	q, _ := sitter.NewQuery([]byte(screamingSnakeCasePattern), lang)
